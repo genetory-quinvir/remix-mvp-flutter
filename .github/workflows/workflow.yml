@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: subosito/flutter-action@v1
         with:
-          channel: 'main'
+          channel: 'dev'
       - run: flutter config --enable-web
       - run: flutter pub get
       - run: flutter build web --release --web-browser-flag "--enable-features=SharedArrayBuffer" --web-browser-flag "--enable-unsafe-webgpu" --web-browser-flag "--disable-web-security" --web-browser-flag "--allow-insecure-localhost"
