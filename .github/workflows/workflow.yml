@@ -18,8 +18,7 @@ jobs:
         flutter-version: '3.27.0' # 사용하는 Flutter 버전으로 변경
 
     - name: Build Web
-      run: flutter build web --release
-
+      run: flutter build web --release --web-browser-flag --enable-features=SharedArrayBuffer
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3.9.3
       with:
