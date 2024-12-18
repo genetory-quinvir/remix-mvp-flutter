@@ -15,10 +15,10 @@ jobs:
           channel: 'master'
       - run: flutter pub get
       - run: flutter config --enable-web
-      - run: flutter build web --base-href "/remix-mvp-flutter/"
+      - run: flutter build web --base-href "/${{ github.event.repository.name }}/"
       
-      - run: git config user.name genetory-quinvir
-      - run: git config user.email jiyoun.moon@quinvir.com
+      - run: git config user.name github-actions
+      - run: git config user.email github-actions@github.com
       - run: git --work-tree build/web add --all
       - run: git commit -m "Automatic deployment by github-actions"
       - run: git push origin HEAD:gh_pages --force
