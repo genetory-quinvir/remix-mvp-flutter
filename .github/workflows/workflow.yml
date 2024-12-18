@@ -1,17 +1,30 @@
-name: Publish to GitHub Pages
-
+name: Flutter Web
 on:
   push:
-    branches: [ main ]
-
+    branches:
+      - master
 jobs:
   build:
+    name: Build Web
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v1
       - uses: subosito/flutter-action@v1
-      - uses: erickzanardo/flutter-gh-pages@v3
-			
-        # with:
-        #   workingDir: [ 'flutter project directory' ] 
+        with:
+          channel: 'dev'
+      - run: flutter config --enable-web
+      - run: flutter pub get
+      - run: flutter build web --release
+        # working-directory: ./your_project_path
+      - name: Deploy
+        run: |
+          cd build/web
+          git init
+          git config --global user.email jiyoun.moon@quinvir.com
+          git config --global user.name genetory-quinvir
+          git status
+          git remote add origin https://${{ secrets.GITHUB_TOKEN }}@github.com/genetory-quinvir/remix-mvp-flutter.git 
+          git checkout -b gh-pages
+          git add --all
+          git commit -m "update"
+          git push origin gh-pages -f
