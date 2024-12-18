@@ -1,18 +1,29 @@
-name: Build and deploy flutter web app
-
+name: Flutter Web
 on:
   push:
-    branches: [ "main" ]
-
+    branches:
+      - master
 jobs:
   build:
+    name: Build Web
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
         with:
-          channel: 'master'
-      - run: flutter pub get
+          channel: 'dev'
       - run: flutter config --enable-web
-      - run: flutter build web --base-href "/${{ github.event.repository.name }}/"
+      - run: flutter pub get
+      - run: flutter build web --release --base-href "/remix-mvp-flutter/" --web-browser-flag "--enable-features=SharedArrayBuffer" --web-browser-flag "--enable-unsafe-webgpu" --web-browser-flag "--disable-web-security" --web-browser-flag "--allow-insecure-localhost"
+      - name: Deploy
+        run: |
+          cd build/web
+          git init
+          git config --global user.email your.email@example.com
+          git config --global user.name your-github-username
+          git status
+          git remote add origin https://${{ secrets.GITHUB_TOKEN }}@github.com/username/repository-name.git 
+          git checkout -b gh-pages
+          git add --all
+          git commit -m "update"
+          git push origin gh-pages -f
