@@ -1,9 +1,7 @@
 import 'dart:typed_data';
 import 'package:ffmpeg_wasm/ffmpeg_wasm.dart';
-import 'package:ffmpeg_wasm/src/ffmpeg.dart';
 import 'package:flutter/material.dart';
 import 'package:cross_file/cross_file.dart';
-import 'dart:js' as js;
 import 'dart:html' as html;
 import '../result/result_view.dart';
 import '../common/common_default_widget.dart';

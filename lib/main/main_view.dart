@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cross_file/cross_file.dart';
-import '../result/result_view.dart';
 import '../common/common_top_view.dart';
 import '../extract/extract_view.dart';
 import 'widgets/main_button_view.dart';

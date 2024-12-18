@@ -1,26 +1,18 @@
-name: Deploy Flutter Web App to GitHub Pages
+name: Build and deploy flutter web app
 
 on:
   push:
-    branches:
-      - main  # 또는 Flutter 앱의 소스 코드가 있는 브랜치 이름
+    branches: [ "main" ]
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4.1.1
-
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2.12.0
-      with:
-        flutter-version: '3.27.0' # 사용하는 Flutter 버전으로 변경
-
-    - name: Build Web
-      run: flutter build web --release #--web-browser-flag "--enable-features=SharedArrayBuffer"
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3.9.3
-      with:
-        github_token: ${{ secrets.remix }} # repository에서 사용할 시크릿 키 이름
-        publish_dir: ./build/web
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'master'
+      - run: flutter pub get
+      - run: flutter config --enable-web
+      - run: flutter build web --base-href "/${{ github.event.repository.name }}/"
