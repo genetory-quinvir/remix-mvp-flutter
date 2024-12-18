@@ -1,18 +1,17 @@
-name: Build and deploy flutter web app
-
+name: Flutter Web
 on:
   push:
-    branches: [ "main" ]
-
+    branches:
+      - master
 jobs:
   build:
+    name: Build Web
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-      - uses: subosito/flutter-action@v2
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
         with:
-          channel: 'master'
-      - run: flutter pub get
+          channel: 'dev'
       - run: flutter config --enable-web
-      - run: flutter build web --base-href "/${{ github.event.repository.name }}/"
+      - run: flutter pub get
+      - run: flutter build web --release --web-browser-flag "--enable-features=SharedArrayBuffer" --web-browser-flag "--enable-unsafe-webgpu" --web-browser-flag "--disable-web-security" --web-browser-flag "--allow-insecure-localhost"
