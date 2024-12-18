@@ -1,36 +1,17 @@
-name: Flutter Web
+name: Publish to GitHub Pages
+
 on:
   push:
-    branches:
-      - master
+    branches: [ main ]
+
 jobs:
   build:
-    name: Build Web
-    env:
-      my_secret: $
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - uses: subosito/flutter-action@v1
-        with:
-          channel: 'dev'
-      - run: flutter config --enable-web
-      - run: flutter pub get
-      - run: flutter build web --release
-        # 1. change path which exist lib/main.dart
-        working-directory: ./example_macos
-      - run: |
-          # 2. change path to [existed lib/main.dart path]/build/web
-          cd example_macos/build/web
-          git init
-           # 3. change your email
-          git config --global user.email jiyoun.moon@quinvir.com
-          # 4. change your name
-          git config --global user.name genetory-quinvir
-          git status
-          # 5. change your repository
-          git remote add origin https://$@github.com/genetory-quinvir/remix-mvp-flutter.git 
-          git checkout -b gh-pages
-          git add --all
-          git commit -m "update"
-          git push origin gh-pages -f
+      - uses: erickzanardo/flutter-gh-pages@v3
+			
+        # with:
+        #   workingDir: [ 'flutter project directory' ] 
