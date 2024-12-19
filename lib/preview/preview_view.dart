@@ -1,3 +1,4 @@
+
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:cross_file/cross_file.dart';
@@ -5,7 +6,8 @@ import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
 import '../common/common_default_widget.dart';
 import '../common/common_top_view.dart';
-import 'dart:html' as html;
+import 'dart:js_interop';
+import 'package:web/web.dart' as web;
 
 class PreviewView extends StatefulWidget {
   const PreviewView({
@@ -84,8 +86,8 @@ class _PreviewViewState extends State<PreviewView> {
 
   Future<void> _setupNewControllers(XFile video) async {
     final bytes = await video.readAsBytes();
-    final blob = html.Blob([bytes]);
-    final url = html.Url.createObjectUrl(blob);
+    final blob = web.Blob([bytes] as JSArray<web.BlobPart>);
+    final url = web.URL.createObjectURL(blob);
     
     _videoController = VideoPlayerController.network(url);
     await _videoController!.initialize();
@@ -115,26 +117,25 @@ class _PreviewViewState extends State<PreviewView> {
   Future<String?> _generateThumbnail(XFile video) async {
     try {
       final bytes = await video.readAsBytes();
-      final blob = html.Blob([bytes]);
-      final url = html.Url.createObjectUrl(blob);
+      final blob = web.Blob([bytes] as JSArray<web.BlobPart>);
+      final url = web.URL.createObjectURL(blob);
       
-      final videoElement = html.VideoElement()
+      final videoElement = web.HTMLVideoElement()
         ..src = url
         ..preload = 'auto'
         ..style.position = 'fixed'
         ..style.opacity = '0';
       
-      html.document.body?.append(videoElement);
+      web.document.body?.append(videoElement);
       await videoElement.onLoadedData.first;
       
-      final canvas = html.CanvasElement(
-        width: videoElement.videoWidth,
-        height: videoElement.videoHeight,
-      );
+      final canvas = web.HTMLCanvasElement()
+        ..width = videoElement.videoWidth
+        ..height = videoElement.videoHeight;
       canvas.context2D.drawImage(videoElement, 0, 0);
       
       videoElement.remove();
-      html.Url.revokeObjectUrl(url);
+      web.URL.revokeObjectURL(url);
       
       return canvas.toDataUrl('image/jpeg', 0.75);
     } catch (e) {

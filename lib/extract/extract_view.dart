@@ -2,9 +2,10 @@ import 'dart:typed_data';
 import 'package:ffmpeg_wasm/ffmpeg_wasm.dart';
 import 'package:flutter/material.dart';
 import 'package:cross_file/cross_file.dart';
-import 'dart:html' as html;
 import '../result/result_view.dart';
 import '../common/common_default_widget.dart';
+import 'dart:js_interop';
+import 'package:web/web.dart' as web;
 
 class ExtractView extends StatefulWidget {
   const ExtractView({super.key, required this.videoList, required this.musicFileList});
@@ -44,7 +45,7 @@ class _ExtractViewState extends State<ExtractView> {
   @override
   void dispose() {
     if (videoUrl != null) {
-      html.Url.revokeObjectUrl(videoUrl!);
+      web.URL.revokeObjectURL(videoUrl!);
     }
 
     super.dispose();
@@ -237,8 +238,8 @@ extension ExtractViewFFMPEGExtension on _ExtractViewState {
     print('출력 파일 크기: ${outputData?.length}');
 
     // Blob URL 생성 및 저장
-    final blob = html.Blob([outputData]);
-    final url = html.Url.createObjectUrlFromBlob(blob);
+    final blob = web.Blob([outputData!] as JSArray<web.BlobPart>);
+    final url = web.URL.createObjectURL(blob);
     
     // 다운로드 링크 생성
     setState(() {

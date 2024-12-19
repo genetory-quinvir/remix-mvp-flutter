@@ -4,7 +4,8 @@ import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
 import '../common/common_default_widget.dart';
 import '../common/common_rounded_button.dart';
-import 'dart:html' as html;
+import 'dart:js_interop';
+import 'package:web/web.dart' as web;
 
 class ResultView extends StatefulWidget {
   const ResultView({super.key, required this.videoData});
@@ -53,8 +54,8 @@ class _ResultViewState extends State<ResultView> {
 
   // 비디오 초기화
   Future<void> _initializeVideo() async {
-    final blob = html.Blob([widget.videoData]);
-    final url = html.Url.createObjectUrlFromBlob(blob);
+    final blob = web.Blob([widget.videoData!] as JSArray<web.BlobPart>);
+    final url = web.URL.createObjectURL(blob);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializePlayer(url).then((_) {
@@ -179,9 +180,10 @@ class _ResultViewState extends State<ResultView> {
 
   // 액션 메서드들
   void _downloadVideo() {
-    final blob = html.Blob([widget.videoData]);
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    final anchor = html.AnchorElement(href: url)
+    final blob = web.Blob([widget.videoData!] as JSArray<web.BlobPart>);
+    final url = web.URL.createObjectURL(blob);
+    final anchor = web.HTMLAnchorElement()
+      ..href = url
       ..setAttribute('download', 'merged_video.mp4')
       ..click();
   }

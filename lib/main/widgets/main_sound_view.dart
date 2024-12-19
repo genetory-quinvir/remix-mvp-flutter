@@ -5,8 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:flutter_audio_waveforms/flutter_audio_waveforms.dart';
 import 'package:just_audio/just_audio.dart';
-import 'dart:html' as html;  // html import 추가
 import 'dart:math' show max, min, pi, sin, sqrt;
+import 'dart:js_interop';
+import 'package:web/web.dart' as web;
 
 class MainSoundView extends StatefulWidget {
   const MainSoundView({super.key, this.didSelect});
@@ -136,8 +137,8 @@ extension MainSoundViewAudioExtension on _MainSoundViewState {
     try {
       final player = AudioPlayer();
       final bytes = await file.readAsBytes();
-      final blob = html.Blob([bytes]);
-      final url = html.Url.createObjectUrl(blob);
+      final blob = web.Blob([bytes.toJS] as JSArray<web.BlobPart>);
+      final url = web.URL.createObjectURL(blob);
       
       await player.setUrl(url);
       await player.load();
@@ -175,7 +176,7 @@ extension MainSoundViewAudioExtension on _MainSoundViewState {
       }
       
       await player.dispose();
-      html.Url.revokeObjectUrl(url);
+      web.URL.revokeObjectURL(url);
       
       return samples;
       
@@ -206,8 +207,8 @@ extension MainSoundViewAudioExtension on _MainSoundViewState {
     try {
       final player = AudioPlayer();
       final bytes = await file.readAsBytes();  
-      final blob = html.Blob([bytes]);
-      final url = html.Url.createObjectUrl(blob);
+      final blob = web.Blob([bytes.toJS] as JSArray<web.BlobPart>);
+      final url = web.URL.createObjectURL(blob);
     
       audioUrls[file.name] = url;
       

@@ -1,10 +1,12 @@
+
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:cross_file/cross_file.dart';
-import 'dart:html' as html;
-
+import 'package:flutter/services.dart';
+import 'dart:js_interop';
+import 'package:web/web.dart' as web;
 import '../../preview/preview_view.dart';
 
 class MainVideoListView extends StatefulWidget {
@@ -38,30 +40,29 @@ extension MainVideoListViewVideoExtension on _MainVideoListViewState {
 Future<String?> generateWebThumbnail(XFile video) async {
   try {
     final bytes = await video.readAsBytes();
-    final blob = html.Blob([bytes]);
-    final url = html.Url.createObjectUrl(blob);
+    final blob = web.Blob([Uint8List.fromList(bytes)] as JSArray<web.BlobPart>);
+    final url = web.URL.createObjectURL(blob);
     
     // 비디오 엘리먼트 생성
-    final videoElement = html.VideoElement()
+    final videoElement = web.HTMLVideoElement()
       ..src = url
       ..preload = 'auto'
       ..style.position = 'fixed'
       ..style.opacity = '0';
     
-    html.document.body?.append(videoElement);
+    web.document.body?.append(videoElement);
     
     // 비디오 로드 대기
     await videoElement.onLoadedData.first;
     
     // 캔버스 생성 및 썸네일 추출
-    final canvas = html.CanvasElement(
-      width: videoElement.videoWidth,
-      height: videoElement.videoHeight,
-    );
+    final canvas = web.HTMLCanvasElement()
+      ..width = videoElement.videoWidth
+      ..height = videoElement.videoHeight;
     canvas.context2D.drawImage(videoElement, 0, 0);
     
     videoElement.remove();
-    html.Url.revokeObjectUrl(url);
+    web.URL.revokeObjectURL(url);
     
     return canvas.toDataUrl('image/jpeg', 0.75);
     
